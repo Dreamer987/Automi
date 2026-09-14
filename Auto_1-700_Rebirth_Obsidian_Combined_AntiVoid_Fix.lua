@@ -982,3 +982,137 @@ Box:AddDropdown("ToolbarNumber", {
         StartToolbar()
     end
 })
+local BasicBox = Tab:AddRightGroupbox("Basic")
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LocalPlayer = Players.LocalPlayer
+
+local SkillRemote = ReplicatedStorage
+    :WaitForChild("Remotes")
+    :WaitForChild("SkillRemote")
+
+local BasicEnabled = false
+local BasicThread = nil
+
+--==================================================
+-- BASIC SKILL ARGS
+--==================================================
+
+local args = {
+    [1] = {
+        ["Camera"] = CFrame.new(
+            1397.9259033203125,
+            600.5099487304688,
+            -2905.99951171875,
+            -1.1920927533992653e-07,
+            0.258819043636322,
+            -0.965925931930542,
+            0,
+            0.965925931930542,
+            0.258819043636322,
+            1,
+            3.085363076138492e-08,
+            -1.1514732989326149e-07
+        ),
+
+        ["SkillId"] = "10",
+        ["Began"] = true,
+
+        ["CFrame"] = CFrame.new(
+            1410,
+            595.57470703125,
+            -2905.99951171875,
+            -1.1920927533992653e-07,
+            0,
+            -1,
+            0,
+            1,
+            0,
+            1,
+            0,
+            -1.1920927533992653e-07
+        ),
+
+        ["Typ\208\181"] = 1,
+
+        ["Aim"] = Vector3.new(
+            1460,
+            595.57470703125,
+            -2905.99951171875
+        )
+    }
+}
+
+--==================================================
+-- CHECK MODE
+--==================================================
+
+local function HasMode()
+    local Characters = workspace:FindFirstChild("Characters")
+    local Character = Characters
+        and Characters:FindFirstChild(LocalPlayer.Name)
+
+    if not Character then
+        return false
+    end
+
+    return Character:FindFirstChild("Mode") ~= nil
+end
+
+--==================================================
+-- START BASIC
+--==================================================
+
+local function StartBasic()
+
+    if BasicThread then
+        return
+    end
+
+    BasicThread = task.spawn(function()
+
+        while BasicEnabled do
+
+            if not HasMode() then
+                SkillRemote:FireServer(unpack(args))
+            end
+
+            task.wait(0.1)
+        end
+
+        BasicThread = nil
+    end)
+end
+
+--==================================================
+-- STOP BASIC
+--==================================================
+
+local function StopBasic()
+
+    BasicEnabled = false
+
+end
+
+--==================================================
+-- BASIC TOGGLE
+--==================================================
+
+BasicBox:AddToggle("Basic", {
+    Text = "auto transform",
+    Default = true,
+
+    Callback = function(Value)
+
+        BasicEnabled = Value
+
+        if Value then
+            StartBasic()
+        else
+            StopBasic()
+        end
+
+    end
+})
