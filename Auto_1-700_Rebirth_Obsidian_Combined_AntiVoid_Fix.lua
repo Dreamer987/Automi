@@ -930,3 +930,55 @@ Box:AddToggle("AntiFall", {
 
 -- Bật sẵn
 StartAntiFall()
+--==================================================
+-- AUTO TOOLBAR SELECTION
+--==================================================
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local ToolRemote = ReplicatedStorage
+    :WaitForChild("Packages")
+    :WaitForChild("_Index")
+    :WaitForChild("sleitnick_knit@1.4.7")
+    :WaitForChild("knit")
+    :WaitForChild("Services")
+    :WaitForChild("ToolService")
+    :WaitForChild("RE")
+    :WaitForChild("UpdatePlayerToolbarSelection")
+
+local SelectedNumber = 1
+local AutoToolbar = false
+local ToolbarThread = nil
+
+local function StartToolbar()
+    if ToolbarThread then return end
+
+    ToolbarThread = task.spawn(function()
+        while AutoToolbar do
+            ToolRemote:FireServer(SelectedNumber)
+            task.wait(0.1)
+        end
+
+        ToolbarThread = nil
+    end)
+end
+
+local function StopToolbar()
+    AutoToolbar = false
+    ToolbarThread = nil
+end
+
+Box:AddDropdown("ToolbarNumber", {
+    Values = {"1", "2", "3", "4", "5", "6"},
+    Default = "1",
+    Multi = false,
+    Text = "Select Number",
+
+    Callback = function(Value)
+        SelectedNumber = tonumber(Value)
+
+        -- Chọn số là tự động kích hoạt
+        AutoToolbar = true
+        StartToolbar()
+    end
+})
