@@ -870,45 +870,63 @@ Obsidian:Notify({
 --// ANTI FALL - OBSIDIAN
 --// Toggle ON/OFF | Default ON
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-
-local LP = Players.LocalPlayer
-local AntiFall = true
-
 --==================================================
 -- ANTI FALL
 --==================================================
 
-local Connection = RunService.Heartbeat:Connect(function()
-    if not AntiFall then return end
+local RunService = game:GetService("RunService")
+local AntiFall = true
+local AntiFallConnection = nil
 
-    local Character = LP.Character
-    if not Character then return end
+local function StartAntiFall()
+    if AntiFallConnection then return end
 
-    local Root = Character:FindFirstChild("HumanoidRootPart")
-    if not Root then return end
+    AntiFallConnection = RunService.Heartbeat:Connect(function()
+        if not AntiFall then return end
 
-    local Velocity = Root.AssemblyLinearVelocity
+        local Character = game.Players.LocalPlayer.Character
+        if not Character then return end
 
-    -- Chặn vận tốc rơi
-    if Velocity.Y < 0 then
-        Root.AssemblyLinearVelocity = Vector3.new(
-            Velocity.X,
-            0,
-            Velocity.Z
-        )
+        local Root = Character:FindFirstChild("HumanoidRootPart")
+        if not Root then return end
+
+        local Velocity = Root.AssemblyLinearVelocity
+
+        if Velocity.Y < 0 then
+            Root.AssemblyLinearVelocity = Vector3.new(
+                Velocity.X,
+                0,
+                Velocity.Z
+            )
+        end
+    end)
+end
+
+local function StopAntiFall()
+    if AntiFallConnection then
+        AntiFallConnection:Disconnect()
+        AntiFallConnection = nil
     end
-end)
+end
 
+--==================================================
+-- ANTI FALL TOGGLE
+--==================================================
 
-
-
-
-Box:AddToggle("AntiFallToggle", {
+Box:AddToggle("AntiFall", {
     Text = "Anti Fall",
     Default = true,
+
     Callback = function(Value)
         AntiFall = Value
+
+        if Value then
+            StartAntiFall()
+        else
+            StopAntiFall()
+        end
     end
 })
+
+-- Bật sẵn
+StartAntiFall()
