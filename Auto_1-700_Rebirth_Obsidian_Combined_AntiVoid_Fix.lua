@@ -867,3 +867,48 @@ Obsidian:Notify({
     Description = "Đã load - chỉ có 1 nút ON/OFF",
     Time = 3
 })
+--// ANTI FALL - OBSIDIAN
+--// Toggle ON/OFF | Default ON
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local LP = Players.LocalPlayer
+local AntiFall = true
+
+--==================================================
+-- ANTI FALL
+--==================================================
+
+local Connection = RunService.Heartbeat:Connect(function()
+    if not AntiFall then return end
+
+    local Character = LP.Character
+    if not Character then return end
+
+    local Root = Character:FindFirstChild("HumanoidRootPart")
+    if not Root then return end
+
+    local Velocity = Root.AssemblyLinearVelocity
+
+    -- Chặn vận tốc rơi
+    if Velocity.Y < 0 then
+        Root.AssemblyLinearVelocity = Vector3.new(
+            Velocity.X,
+            0,
+            Velocity.Z
+        )
+    end
+end)
+
+
+
+
+
+Box:AddToggle("AntiFallToggle", {
+    Text = "Anti Fall",
+    Default = true,
+    Callback = function(Value)
+        AntiFall = Value
+    end
+})
