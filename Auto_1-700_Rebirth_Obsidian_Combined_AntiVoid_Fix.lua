@@ -1116,3 +1116,83 @@ BasicBox:AddToggle("Basic", {
 
     end
 })
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local SkillRemote = ReplicatedStorage
+    :WaitForChild("Remotes")
+    :WaitForChild("SkillRemote")
+
+local Running = false
+
+--// Skill 9
+local function UseSkill9()
+    local args = {
+        [1] = {
+            ["Camera"] = CFrame.new(
+                1362.0875244140625,
+                601.2300415039062,
+                -2982.91015625,
+                0.8348132967948914,
+                -0.18300960958004,
+                0.5192247629165649,
+                0,
+                0.9431307319160461,
+                0.332422465085984,
+                -0.55053323507309,
+                -0.277510702610016,
+                0.7873380184173584
+            ),
+
+            ["SkillId"] = "9",
+            ["Toggle"] = true,
+            ["Began"] = true,
+
+            ["CFrame"] = CFrame.new(
+                1355.59716796875,
+                595.374755859375,
+                -2992.751953125,
+                -0.192925050854683,
+                -1.74180647682931e-09,
+                -0.981213510036469,
+                -2.9545856872204e-09,
+                1,
+                -1.19422827182802e-09,
+                0.981213510036468,
+                2.66868283027577e-09,
+                -0.192925050854683
+            ),
+
+            ["Typ\208\181"] = 1,
+
+            ["Aim"] = Vector3.new(
+                1404.6578369140625,
+                595.374755859375,
+                -2983.105712890625
+            )
+        }
+    }
+
+    SkillRemote:FireServer(unpack(args))
+end
+
+--// ON / OFF
+RightBox:AddToggle("AutoSkill9", {
+    Text = "Auto fusion",
+    Default = false,
+
+    Callback = function(Value)
+        Running = Value
+
+        if Value then
+            task.spawn(function()
+                while Running do
+                    UseSkill9()
+
+                    --// 9 giây / lần
+                    task.wait(9)
+                end
+            end)
+        end
+    end
+})
+
+Library:Toggle(true)
