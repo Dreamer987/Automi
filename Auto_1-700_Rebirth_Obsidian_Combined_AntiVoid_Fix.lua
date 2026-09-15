@@ -1175,7 +1175,7 @@ local function UseSkill9()
 end
 
 --// ON / OFF
-RightBox:AddToggle("AutoSkill9", {
+BasicBox:AddToggle("Basic", {
     Text = "Auto fusion",
     Default = false,
 
