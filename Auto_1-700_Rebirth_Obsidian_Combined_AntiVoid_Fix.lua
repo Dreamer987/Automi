@@ -1281,7 +1281,7 @@ end
 
 
 --// THÊM NÚT VÀO BOX PHẢI
-RightBox:AddToggle("Basic", {
+BasicBox:AddToggle("Basic", {
     Text = "Auto beast [work all kaioken]",
     Default = false,
 
