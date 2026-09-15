@@ -1196,3 +1196,106 @@ BasicBox:AddToggle("Basic", {
 })
 
 Library:Toggle(true)
+--// BOX PHẢI
+--// Auto Skill 8
+--// Có TechniqueEffect = không kích hoạt
+--// Không có TechniqueEffect = kích hoạt
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local LocalPlayer = Players.LocalPlayer
+local SkillRemote = ReplicatedStorage
+    :WaitForChild("Remotes")
+    :WaitForChild("SkillRemote")
+
+local AutoSkill8 = false
+
+local function GetCharacter()
+    local Characters = workspace:FindFirstChild("Characters")
+    if not Characters then
+        return nil
+    end
+
+    return Characters:FindFirstChild(LocalPlayer.Name)
+end
+
+local function ActivateSkill()
+    local Character = GetCharacter()
+    if not Character then
+        return
+    end
+
+    -- Có TechniqueEffect thì KHÔNG kích hoạt
+    if Character:FindFirstChild("TechniqueEffect") then
+        return
+    end
+
+    local args = {
+        [1] = {
+            ["Camera"] = CFrame.new(
+                1357.5260009765625,
+                601.8997192382812,
+                -2944.33154296875,
+                -0.27307000756263733,
+                -0.37132728099823,
+                0.887439489364624,
+                0,
+                0.9224998950958252,
+                0.3859974145889282,
+                -0.9619942307472229,
+                0.1054043173789978,
+                -0.25190702080726624
+            ),
+
+            ["SkillId"] = "8",
+            ["Began"] = true,
+
+            ["CFrame"] = CFrame.new(
+                1346.4329833984375,
+                595.374755859375,
+                -2941.1826171875,
+                0.177979975938797,
+                -5.2889873813910526e-08,
+                -0.9840341210365295,
+                7.853634187426906e-09,
+                1,
+                -5.2327543187402625e-08,
+                0.9840341210365295,
+                1.5850102341730121,
+                0.177979975938797
+            ),
+
+            ["Typ\208\181"] = 1,
+
+            ["Aim"] = Vector3.new(
+                1395.6346435546875,
+                595.374755859375,
+                -2950.08154296875
+            )
+        }
+    }
+
+    SkillRemote:FireServer(unpack(args))
+end
+
+
+--// THÊM NÚT VÀO BOX PHẢI
+RightBox:AddToggle("Basic", {
+    Text = "Auto beast [work all kaioken]",
+    Default = false,
+
+    Callback = function(Value)
+        AutoSkill8 = Value
+    end
+})
+
+
+--// LOOP
+task.spawn(function()
+    while task.wait(0.1) do
+        if AutoSkill8 then
+            ActivateSkill()
+        end
+    end
+end)
